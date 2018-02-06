@@ -1,0 +1,143 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>后台登录</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.ico">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+  <script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+  <script src="__STATIC__/amazeui/js/app.js"></script>
+
+</head>
+<style type="text/css">
+  .login-bg{
+    background:url(__STATIC__/img/bg.png) no-repeat center;
+    background-size: cover;
+    overflow: hidden;
+  }
+  .login{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 300px;
+    height: 160px;
+    margin:auto;
+  }
+  .footer{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 60px;
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    margin:0 auto;
+    color:#666;
+    font-size: 12px;
+  }
+  .am-input-group-label{
+    background:#0e90d2;
+    border:#0e90d2 1px solid;
+    color: #fff;
+  }
+</style>
+<body class="login-bg">
+
+
+
+<form action="action" method="POST" role="form" class="am-form am-form-horizontal am-animation-scale-up layui-form login">
+  <!-- form 结合 grid 使用 -->
+ <div class="am-input-group am-margin-top-sm am-animation-slide-left">
+   <span class="am-input-group-label">    
+     <i class="am-icon-envelope"></i>    
+   </span>
+   <input type="text" name="username" class="am-form-field" placeholder="邮箱账号" required> 
+ </div>
+ <div class="am-input-group am-margin-top-sm am-animation-slide-right">
+   <span class="am-input-group-label">    
+     <i class="am-icon-unlock"></i>    
+   </span>
+   <input type="password" name="password" class="am-form-field" placeholder="密码" required>
+ </div>
+  <div class="am-form-group am-margin-top-sm am-animation-scale-down">
+    <div class="">
+      <button type="submit" class="am-btn am-btn-default am-btn-primary  am-g" lay-submit lay-filter="login">登录</button>
+    </div>
+  </div>
+</form>
+<footer class="footer am-animation-slide-bottom">
+  &copy 2018 版权所有 远耀电子商务
+</footer>
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+var form,layer;
+layui.use(['form','layer'], function(){
+    form = layui.form, layer = layui.layer;
+
+    form.on('submit(login)', function(data){
+   console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+  var indexs = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+  $.ajax({
+   type: "POST",
+   url: host+"/admin/login/loginHandle",
+   data: data.field,
+   success: function(obj){
+     if(obj.error==200){
+      layer.alert(obj.msg, function(index){
+       parent.layer.close(indexs); //再执行关闭   
+       var url = host + obj.url;
+       faryao.goto(url);
+       }); 
+     }else{
+      layer.alert(obj.msg); 
+     }
+   }
+  }); 
+  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+  });
+})
+</script>
+</body>
+</html>

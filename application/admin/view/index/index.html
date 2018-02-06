@@ -1,0 +1,144 @@
+{include file="public/header" /}
+<link rel="stylesheet" href="__STATIC__/layui/css/layui.css"  media="all">
+<div class="am-cf admin-main"> 
+
+{include file="public/side_nav" /}
+<div class="admin-content" >
+<div class="admin layui-tab layui-tab-card" lay-filter="tablenav" lay-allowclose="true">
+  <ul class="layui-tab-title navbar">
+    <li lay-id="home" class="layui-this">网站设置</li>
+  </ul>
+
+  <div class="layui-tab-content" style="">
+    <div class="layui-tab-item layui-show">
+      <iframe src="{:url('admin/index/home')}" name="main"  width="100%" height="100%" border="0" scrolling-y="auto" id="iframebox" onload="changeFrameHeight()" ></iframe>
+    </div>
+  </div>
+</div> 
+
+</div>
+
+
+<!--[if lt IE 9]>
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="__STATIC__/amazeui/js/polyfill/rem.min.js"></script>
+<script src="__STATIC__/amazeui/js/polyfill/respond.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.legacy.js"></script>
+<![endif]--> 
+
+<!--[if (gte IE 9)|!(IE)]><!--> 
+
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+
+
+<script>
+   var layer;
+   var iframe = faryao.autoheight();
+   var header = $('.admin-header').height();
+   var daohang = $('.navbar').height();
+   var frame = iframe-header-daohang;
+   layui.use(['element','layer'], function(){
+  var $ = layui.jquery
+  ,element = layui.element; //Tab的切换功能，切换事件监听等，需要依赖element模块
+  layer = layui.layer;
+  get_timeout();//检查超时
+  //触发事件
+  var active = {
+    tabAdd: function(title,url,id){
+       //var url ="hhh";
+      //新增一个Tab项
+     element.tabAdd('tablenav', {
+        title: title 
+        ,content: '<iframe src='+url+' name="main"  width="100%" height="100%" border="0" scrolling="auto" id="iframebox" style="height:'+frame+'px"></iframe>'
+        ,id: id //实际使用一般是规定好的id，这里以时间戳模拟下
+      })
+    }
+    ,tabDelete: function(othis){
+      //删除指定Tab项
+      element.tabDelete('tablenav', '44'); //删除：“商品管理”
+      
+      
+      othis.addClass('layui-btn-disabled');
+    }
+    ,tabChange: function(id){
+      //切换到指定Tab项
+      element.tabChange('tablenav', id); //切换到：用户管理
+    }
+  };
+  //点击添加按钮
+  $('.site-nav-active').on('click', function(event){
+    var othis = $(this), type = othis.data('type'),url = othis.data('url'),id = othis.data('id'),title = othis.data('title');
+    var l = $('.navbar li').length;
+     for (var i = 0; i < l; i++) {
+       var t = $('.navbar li').eq(i).attr('lay-id');
+       if(t==id){
+          active.tabChange(t);
+          event.stopPropagation();
+          return;
+
+       }
+         
+       }
+    
+      active.tabAdd(title,url,id);
+      element.tabChange('tablenav', id);
+      event.stopPropagation();
+   // console.log(type);
+    //active[type] ? active[type].call(this, othis) : '';
+  });
+  
+  //Hash地址的定位
+  var layid = location.hash.replace(/^#test=/, '');
+  element.tabChange('test', layid);
+  
+  element.on('tab(test)', function(elem){
+    location.hash = 'test='+ $(this).attr('lay-id');
+  });
+   
+});
+</script>
+<script type="text/javascript">
+
+$(function(){
+ 
+  
+})
+
+function changeFrameHeight(){
+   
+   $('.admin-content').css({
+    'height':iframe-header-1+'px',
+   })
+   $('#iframebox').css({
+    'height':iframe-header-daohang+'px',
+    'overflow':'scroll',
+   })
+
+}
+
+window.onresize=function(){  
+     changeFrameHeight();  
+
+} 
+/*
+  检查超时
+ */
+function get_timeout(){
+   var t = setInterval(function(){
+    $.post(host+"/admin/index/timeOut", {},
+     function(data){
+       if(data.error!=0){
+        clearTimeout(t);
+        layer.alert(data.msg, function(index){
+         //parent.layer.close(indexs); //再执行关闭   
+         parent.location.reload();
+       }); 
+       }
+     }, "json");
+   },10000)
+}
+</script>
+</body>
+</html>

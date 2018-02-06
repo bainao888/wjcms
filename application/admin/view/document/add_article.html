@@ -1,0 +1,211 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>添加</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/layui/css/layui.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+
+
+</head>
+<body>
+<div class="am-margin-left-sm am-margin-right-sm am-margin-top-sm">
+<div class="am-alert am-alert-warning" data-am-alert>
+  <button type="button" class="am-close">&times;</button>
+  注：带有“*”号为必填项
+</div>
+<form action="action" method="POST" enctype="multipart/form-data" role="form" class="am-form layui-form" id="adddocument">
+
+  <table class="am-table am-table-bordered">
+    <tbody>
+      <tr>
+        <td width="8%">标题：<span class="am-text-danger">*</span></td>
+        <td><input type="text" name="title" class="am-form-field" lay-verify="required" placeholder="30字内的标题"></td>
+        <td rowspan="3" width="300" align="center">
+          <!-- 能结合 Grid、AVG Grid 使用 -->
+          <div class="am-text-center">
+            <img class="thumb am-radius" src="__STATIC__/img/error-img.png" width="140" height="140" />
+            <input type="hidden" name="thumb_id" id="thumb_id">
+          </div>
+          <button type="button" title="最佳尺寸为600*600" class="layui-btn am-margin-top-xs" id="uploadThumb"><i class="layui-icon">&#xe67c;</i>选择图片</button>
+        </td>
+      </tr>
+      <tr>
+        <td width="8%">描述：</td>
+        <td><textarea name="desc" class="am-form-field" placeholder="200字内描述"></textarea></td>
+      </tr>
+      <tr>
+        <td width="8%">分类：<span class="am-text-danger">*</span></td>
+        <td>
+
+          <select name="cate_id" lay-verify="required">
+            <option>请选择</option>
+            {volist name="catelist" id="vo"}
+            <option value="{$vo.id}">{$vo.title}</option>
+            {/volist}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td width="8%">最新：</td>
+        <td colspan="">
+          <input type="checkbox" name="is_new" value="1" lay-skin="switch" lay-text="是|否">
+        </td>
+        <td rowspan="3">
+          <p>详情模板：</p>
+          <select name="template" lay-verify="required">
+            <option>选择模板</option>
+            <option value="info">文档</option>
+            <option value="datail">新闻</option>
+          </select>
+          
+         
+        </td>
+      </tr>
+      <tr>
+        <td width="8%">推荐：</td>
+        <td colspan="">
+          <input type="checkbox" name="is_top" value="1" lay-skin="switch" lay-text="是|否">
+        </td>
+      </tr>
+      <tr>
+        <td width="8%">内容：<span class="am-text-danger">*</span></td>
+        <td colspan="">
+          <!-- <textarea name="content" rows="20" class="am-form-field" id="content" lay-verify="required" placeholder=""></textarea> -->
+          {ueditor:ueditor id="editor" name="content" iscode="0" width="100%" height="500px"   toolbar="weixin"  url="admin/document/ueditorUpload"}{/ueditor:ueditor}
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+  <div class="am-text-center am-margin-bottom-sm">
+    <input type="hidden" name="module_id" value="{:input("param.id")}">
+    <input type="hidden" name="module" value="{:input("param.m")}">
+  <button type="submit" class="am-btn am-btn-primary am-btn-default am-radius"  lay-submit lay-filter="document">提交</button>
+  </div>
+
+</form>
+</div>
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+ue.ready(function() {
+   // ue.setContent('<p>hello!</p>');
+    //alert(ue.hasContents());
+    ue.sync('#adddocument');
+});
+
+var form,layer;
+layui.use(['form','layer','upload'], function(){
+    form = layui.form, layer = layui.layer;
+    var upload = layui.upload;
+
+   //图片上传
+  var uploadInst = upload.render({
+    elem: '#uploadThumb' //绑定元素
+    ,url: host+'/admin/document/upload/' //上传接口
+    ,choose: function(obj){
+      //将每次选择的文件追加到文件队列
+      var files = obj.pushFile();
+      
+      //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+      obj.preview(function(index, file, result){
+        console.log(index); //得到文件索引
+        console.log(file); //得到文件对象
+        console.log(result); //得到文件base64编码，比如图片
+        $('.thumb').attr('src',result);
+        //这里还可以做一些 append 文件列表 DOM 的操作
+        
+        //obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
+        //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+      });
+    }
+    ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+      layer.load(); //上传loading
+    }
+    ,done: function(res){
+      //上传完毕回调
+      $('.thumb').attr('src',res.result.path);
+      $('#thumb_id').val(res.result.id);
+      layer.closeAll('loading');
+
+    },
+    accept:'images'
+    ,auto:true
+    ,error: function(){
+      //请求异常回调
+      layer.closeAll('loading');
+    }
+  });
+
+   $('.createtime').click(function(){
+    var v = $(this).val();
+    console.log(v);
+   })
+
+
+    form.on('submit(document)', function(data){
+   console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+  var indexs = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+  $.ajax({
+   type: "POST",
+   url: host+"/admin/document/add",
+   data: data.field,
+   success: function(obj){
+     if(obj.error==0){
+      layer.alert(obj.msg, function(index){
+       parent.layer.close(indexs); //再执行关闭   
+       parent.location.reload();
+       }); 
+     }else{
+      layer.alert(obj.msg); 
+     }
+   }
+  }); 
+  return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+  });
+})
+</script>
+</body>
+</html>

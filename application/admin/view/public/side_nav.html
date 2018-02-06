@@ -1,0 +1,26 @@
+<div class="nav-navicon admin-main admin-sidebar">
+    <div class="sideMenu am-icon-dashboard" style="color:#aeb2b7; margin: 10px 0 0 0;"> 欢迎系统管理员：{$Think.session.ht_user.nickname}</div>
+    <div class="sideMenu">
+      {volist name="sideBar" id="vo"}
+      <h3 class="{$vo.icon}"><em></em> <a href="#">{$vo.title}</a></h3>
+      <ul>
+        {volist name="vo.child" id="vs" key="k"}
+        <li><a class="site-nav-active" href="javascript:;" data-type="tabAdd" data-url="{$vs.url}" data-id="{$i}-{$k}" data-title="{$vs.title}">{$vs.title}</a></li>
+        {/volist}
+      </ul>
+      {/volist}
+    </div>
+    
+    <!-- sideMenu End --> 
+</div>
+    <script type="text/javascript">
+      $(".sideMenu").slide({
+        titCell:"h3", //鼠标触发对象
+        targetCell:"ul", //与titCell一一对应，第n个titCell控制第n个targetCell的显示隐藏
+        effect:"slideDown", //targetCell下拉效果
+        delayTime:300 , //效果时间
+        triggerTime:150, //鼠标延迟触发时间（默认150）
+        defaultPlay:true,//默认是否执行效果（默认true）
+        returnDefault:false //鼠标从.sideMen移走后返回默认状态（默认false）
+        });
+    </script> 

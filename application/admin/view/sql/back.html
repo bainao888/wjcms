@@ -1,0 +1,167 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>你的标题</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+</head>
+<body>
+<div class="am-margin-left-sm am-margin-right-sm am-margin-top-lg am-margin-bottom-lg">
+  <div class="databasetip am-padding-left-sm am-padding-right-sm">数据库中共有{$tableNum}张表，共计{$total}
+  <a href="javascript:void(0)" onclick="gobackup(this)" class="am-btn am-btn-xs am-btn-success am-fr am-margin-right-xs am-margin-top-xs " >备份</a>
+  <a href="javascript:window.location.reload();"  class="am-btn am-btn-xs am-btn-primary am-margin-right-xs" >刷新</a>
+  </div>
+  <table class="am-table am-table-bordered am-table-hover am-text-xs am-margin-top-sm">
+    <thead>
+      <tr>
+        <th>
+           <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+            <input type="checkbox" value="1"   class="selectAll" data-am-ucheck>
+          </label>
+        </th>
+        <th>数据库表</th>
+        <th>记录条数</th>
+        <th>占用空间</th>
+        <th>类型</th>
+        <th>编码</th>
+        <th>创建时间</th>
+        <th>说明</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {volist name="dataList" id="v"}
+        <tr>
+            <td>
+                <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+                  <input type="checkbox" value="{$v.Name}" name="backs[]"  data-am-ucheck>
+                </label>
+            </td>
+            <td>{$v.Name}</td>
+            <td>{$v.Rows}</td>
+            <td>{$v.Data_length|format_bytes}</td>
+            <td>{$v.Engine}</td>
+            <td>{$v.Collation}</td>
+            <td>{$v.Create_time}</td>
+            <td>{$v.Comment}</td>
+            <td>
+                <a href="javascript:;" onclick="return optimize('{$v['Name']}');" class="am-btn am-btn-xs am-btn-success">优化</a>
+                <a href="javascript:;" onclick="return repair('{$v['Name']}');" class="am-btn am-btn-xs am-btn-danger">修复</a>
+            </td>
+        </tr>
+      {/volist}
+    </tbody>
+  </table>
+</div>
+
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.all.js"></script>
+<script>
+
+  $(function() {
+     $('.selectAll').on('click', function(event) {
+            var $input = $('.am-table tbody tr td').find('input');
+            $input.prop("checked", function( i, val ) {
+              return !val;
+            });
+    });
+  	
+  });
+    /*
+     备份
+     */
+    function gobackup(obj){
+        var a = [];
+        $('input[name*=backs]').each(function(i,o){
+            if($(o).is(':checked')){
+                a.push($(o).val());
+            }
+        });
+
+        $(obj).addClass('disabled');
+        $(obj).html('备份进行中...');
+        $.post("{:url('admin/sql/backup')}",{tables:a},function(data){
+            //data = eval('('+data+')');
+            if(data.code==1){
+                $(obj).removeClass('disabled');
+                $(obj).html('备份');
+                layer.msg(data.msg,{time:500},function(){
+                  window.location.href = data.url;
+                });
+            }else{
+                layer.msg(data.msg,{time:1800});
+            }
+        },'json');
+    }
+    /*
+     优化
+     */
+    function optimize(name) {
+        $.post("{:url('admin/sql/optimize')}",{tableName:name},function(res){
+            if(res.code > 0){
+                layer.msg(res.msg,{time:1800},function(){
+                    window.location.href = res.url;
+                });
+            }else{
+                layer.msg(res.msg,{time:1800});
+            }
+        });
+    }
+    /*
+     修复
+     */
+    function repair(name) {
+        $.post("{:url('admin/sql/repair')}",{tableName:name},function(data){
+            if(data.code>0){
+                layer.msg(data.msg,{time:1800}, function(){
+                    window.location.href = data.url;
+                });
+            }else{
+                layer.msg(data.msg,{time:1800});
+            }
+        });
+    }
+</script>
+</body>
+</html>

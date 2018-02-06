@@ -1,0 +1,180 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>你的标题</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+
+
+</head>
+<body>
+<div class="">
+	<table class="am-table am-table-radius am-table-hover am-margin-bottom-0">
+	  <tbody>
+	    <tr class="am-active">
+	      <td>
+	      	<!-- <button type="button" class="am-btn am-btn-xs am-btn-default am-btn-success"><i class="am-icon-play am-margin-right-xs"></i>恢复</button>
+	      	<button type="button" class="am-btn am-btn-xs am-btn-default am-btn-danger"><i class="am-icon-stop am-margin-right-xs"></i>删除</button> -->
+	      	<button type="button" onclick="faryao.reload()" class="am-btn am-btn-xs am-btn-default am-btn-secondary"><i class="am-icon-refresh am-margin-right-xs"></i>刷新</button>
+	      </td>
+	    </tr>
+	  </tbody>
+	</table>
+</div>
+<div class=" am-margin-top-xs">
+	<table class="am-table am-table-radius am-table-bordered am-text-xs" id="modulelist">
+	  <thead>
+	    <tr class="am-success">
+	      <th width="10%">
+	      <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+	        <input type="checkbox" value="1"  class="selectAll" data-am-ucheck>
+	      </label>编号
+	      </th>
+	      <th>标识</th>
+	      <th>名称</th>
+	      <th width="5%">创建时间</th>
+	      <th width="20%">操作</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {volist name="list" id="vo"}
+	    <tr>
+	      <td>
+	      <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+	        <input type="checkbox" value="<{$vo.id_module}>" name="id[]" data-am-ucheck>
+	      </label><{$vo.id_module}>
+	      </td>
+	      <td><{$vo.module_name}></td>
+	      <td><{$vo.module_title}></td>
+	      <td><{$vo.module_create_time}></td>
+	      <td>
+	        <button type="button" class="am-btn am-btn-xs am-btn-default am-btn-danger"  onclick="restore('<{$vo.id_module}>');">恢复</button>
+	        <button type="button" class="am-btn am-btn-xs am-btn-default am-btn-warning" onclick="trash('<{$vo.id_module}>','<{$vo.module_name}>');">删除</button>
+
+	      </td>
+	    </tr>
+	    {/volist}
+	  </tbody>
+	</table>
+	{$list->render()}
+</div>
+
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+var form,layer;
+layui.use(['form','layer'], function(){
+    form = layui.form, layer = layui.layer;
+ $('.selectAll').on('click',function(){
+      var flag = $(this).is(':checked');
+      console.log(flag);
+      if(flag){
+          $("#modulelist tbody input[type='checkbox']").prop("checked", function( i, val ) {     
+          return !val;
+          });
+      }else{
+      	$("#modulelist tbody input[type='checkbox']").prop('checked',false);
+      }
+   })
+})
+/*
+ 恢复数据
+ */
+function restore(id,name){
+	layer.confirm('恢复后可在模型管理查看', {icon: 3, title:'提示'}, function(index){
+    //console.log(index);
+   $.post(host+"/admin/module/restore", { id: id},
+   function(data){
+    if(data.error == 0){
+    	layer.alert(data.msg);
+    	setTimeout(function(){
+       faryao.reload();
+       },2000);
+    }else{
+    	layer.alert(data.msg);
+    }
+   }, "json");
+    
+  layer.close(index);
+  });
+}
+
+/*
+ 删除数据
+ */
+function trash(id,name){
+	layer.confirm('删除后不可恢复', {icon: 3, title:'提示'}, function(index){
+    //console.log(index);
+   $.post(host+"/admin/module/readyDel", { id: id, name: name},
+   function(data){
+    if(data.error == 0){
+    	layer.alert(data.msg);
+    	setTimeout(function(){
+       faryao.reload();
+       },2000);
+    }else{
+    	layer.alert(data.msg);
+    }
+   }, "json");
+    
+  layer.close(index);
+  });
+}
+function get_selected(){
+	var arr = new Array();
+	$("#modulelist tbody input[type='checkbox']").each(function(i,v){
+		var flag = $("#modulelist tbody input[type='checkbox']").eq(i).is(':checked');
+		
+		if(flag){
+          var v = $(v).val();
+          arr.push(v);
+		}
+		
+	})
+	console.log(arr);
+    return arr;
+}
+</script>
+</body>
+</html>

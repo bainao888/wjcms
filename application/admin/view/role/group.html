@@ -1,0 +1,200 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>你的标题</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+
+
+</head>
+<body>
+<div class="">
+	<table class="am-table am-table-radius am-table-hover am-margin-bottom-0">
+	  <tbody>
+	    <tr class="am-active">
+	      <td>
+	      	<button type="button" class="am-btn am-btn-xs am-btn-default am-btn-primary" onclick="openWin('{:url('admin/role/add')}','添加组');"><i class="am-icon-plus am-margin-right-xs"></i>添加组</button>
+	      	<!-- <button type="button" class="am-btn am-btn-xs am-btn-default am-btn-success"><i class="am-icon-play am-margin-right-xs"></i>启用</button>
+	      	<button type="button" class="am-btn am-btn-xs am-btn-default am-btn-danger"><i class="am-icon-stop am-margin-right-xs" ></i>禁用</button> -->
+	      	<button type="button" onclick="faryao.reload()" class="am-btn am-btn-xs am-btn-default am-btn-secondary"><i class="am-icon-refresh am-margin-right-xs"></i>刷新</button>
+	      </td>
+	    </tr>
+	  </tbody>
+	</table>
+</div>
+<div class="am-margin-top-xs">
+	<table class="am-table am-table-radius am-table-bordered am-text-xs" id="modulelist">
+	  <thead>
+	    <tr class="am-success">
+	      <th width="5%">
+	      <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+	        <input type="checkbox" value="1"  class="selectAll" data-am-ucheck>
+	      </label>编号
+	      </th>
+	      <th>组</th>
+
+	      <th width="25%">描述</th>
+	      <th>状态</th>
+	      <th width="14%">操作</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    {volist name="list" id="vo"}
+	    <tr>
+	      <td>
+	      <label class="am-checkbox am-margin-top-0 am-margin-bottom-0 am-inline">
+	        <input type="checkbox" value="{$vo.id_auth_group}" name="id[]" data-am-ucheck>
+	      </label>{$vo.id_auth_group}
+	      </td>
+	     
+	      <td>{$vo.auth_group_title}</td>
+	      <td>{$vo.auth_group_description}</td>
+	      <td>
+			      {$vo.auth_group_status}
+	      </td>
+	      <td> 
+
+	        <button type="button" class="am-btn am-btn-xs am-btn-default am-btn-default" onclick="openWin('{:url('admin/role/edit',['id'=>$vo['id_auth_group']])}','编辑');">编辑</button>
+			<button type="button" class="am-btn am-btn-xs am-btn-default am-btn-warning" onclick="del('{$vo.id_auth_group}');">删除</button>
+			
+	      </td>
+	    </tr>
+	    {/volist}
+	  </tbody>
+	</table>
+
+</div>
+
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript">
+var form,layer;
+layui.use(['form','layer'], function(){
+    form = layui.form, layer = layui.layer;
+   //全选
+   $('.selectAll').on('click',function(){
+      var flag = $(this).is(':checked');
+      //console.log(flag);
+      if(flag){
+          $("#modulelist tbody input[type='checkbox']").prop("checked", function( i, val ) {     
+          return !val;
+          });
+          get_selected();
+      }else{
+      	$("#modulelist tbody input[type='checkbox']").prop('checked',false);
+      	get_selected();
+      }
+   })
+   //点击选择或取消
+   $("#modulelist tbody input[type='checkbox']").click(function(){
+   	get_selected();
+   })
+
+})
+//添加
+function openWin(url,title){
+	var index = layer.open({
+	  type: 2,
+	  anim:2,
+	  title: title,
+	  maxmin:false,
+	  shadeClose: false,
+	  resize:false,
+	  shade: 0.8,
+	  area: ['auto', 'auto'],
+	  content: url ,//iframe的url
+      cancel: function(){ 
+    //右上角关闭回调
+    
+     // return false //开启该代码可禁止点击该按钮关闭
+     }
+	});
+	layer.full(index);  
+}
+
+/*
+ 获取字段信息
+ */
+function getfields(name){
+  
+  return;
+}
+//删除
+function del(id){
+   layer.confirm('删除后不可恢复', {icon: 3, title:'提示'}, function(index){
+    //console.log(index);
+   $.post(host+"/admin/role/del", { id: id},
+   function(data){
+    if(data.error == 0){
+    	layer.alert(data.msg);
+    	setTimeout(function(){
+       faryao.reload();
+       },2000);
+    	
+    }else{
+    	layer.alert(data.msg);
+    }
+   }, "json");
+    
+  layer.close(index);
+  });
+}
+//获取选中的值
+function get_selected(){
+	var arr = new Array();
+	$("#modulelist tbody input[type='checkbox']").each(function(i,v){
+		var flag = $("#modulelist tbody input[type='checkbox']").eq(i).is(':checked');
+		
+		if(flag){
+          var v = $(v).val();
+          arr.push(v);
+		}
+		
+	})
+	console.log(arr);
+    return arr;
+}
+</script>
+</body>
+</html>

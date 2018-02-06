@@ -1,0 +1,123 @@
+<!doctype html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>你的标题</title>
+
+  <!-- Set render engine for 360 browser -->
+  <meta name="renderer" content="webkit">
+
+  <!-- No Baidu Siteapp-->
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+  <link rel="icon" type="image/png" href="__STATIC__/amazeui/i/favicon.png">
+
+  <!-- Add to homescreen for Chrome on Android -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Add to homescreen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="faryao.cn"/>
+  <link rel="apple-touch-icon-precomposed" href="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+
+  <!-- Tile icon for Win8 (144x144 + tile color) -->
+  <meta name="msapplication-TileImage" content="__STATIC__/amazeui/i/app-icon72x72@2x.png">
+  <meta name="msapplication-TileColor" content="#0e90d2">
+
+  <!-- Amaze UI CSS -->
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/amazeui.min.css">
+  <link rel="stylesheet" href="__STATIC__/amazeui/css/admin.css">
+</head>
+<body>
+<div class="am-margin-left-sm am-margin-right-sm am-margin-top-lg am-margin-bottom-lg">
+  <div class="databasetip am-padding-left-sm am-padding-right-sm">
+  <a href="javascript:window.location.reload();"  class="am-btn am-btn-xs am-btn-primary am-margin-right-xs" >刷新</a>
+  </div>
+  <table class="am-table am-table-bordered am-table-hover am-text-xs am-margin-top-sm">
+    <thead>
+      <tr>
+        <th>文件名称</th>
+        <th>文件大小</th>
+        <th>备份时间</th>
+        <th>卷号</th>
+        <th>操作</th>
+    </thead>
+    <tbody>
+      {volist name="vlist" id="vo"}
+        <tr>
+            <td>{$vo.name}</td>
+            <td>{$vo.size|byte_format}</td>
+            <td>{$vo.time|date='Y-m-d H:i:s',###}</td>
+            <td>{$vo.number}</td>
+            <td>
+                <a href="javascript:;" onclick="return recover('{$vo['name']}');" class="am-btn am-btn-xs am-btn-primary">恢复</a>
+                <a href="{:url('admin/sql/downFile',array('type'=>'sql','file'=>$vo['name']))}" class="am-btn am-btn-xs am-btn-success">下载</a>
+                <a href="javascript:;" onclick="return del('{$vo['name']}');" class="am-btn am-btn-xs am-btn-danger">删除</a>
+            </td>
+        </tr>
+      {/volist}
+    </tbody>
+  </table>
+</div>
+
+<!--[if lt IE 9]>
+<script src="//libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+<script src="//cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
+<script src="/js/polyfill/rem.min.js"></script>
+<script src="//libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+<script src="//cdn.amazeui.org/amazeui/2.1.0/js/amazeui.legacy.min.js"></script>
+<![endif]-->
+
+<!--[if (gte IE 9)|!(IE)]><!-->
+<script src="__STATIC__/amazeui/js/jquery.min.js"></script>
+<script src="__STATIC__/amazeui/js/amazeui.min.js"></script>
+<!--<![endif]-->
+<script src="__STATIC__/amazeui/js/common.js"></script>
+<script src="__STATIC__/layui/layui.all.js"></script>
+<script>
+
+  $(function() {
+    
+  	
+  });
+  /*
+    恢复数据
+   */
+ function recover(name) {
+        layer.confirm('确认要导入数据吗？',{icon: 0}, function () {
+            var c = layer.load();
+            $.post("{:url('admin/sql/restoreData')}",{sqlfilepre:name},function(data){
+               layer.close(c);
+                if(data.code==1){
+                    layer.msg(data.msg, {time: 1800});
+                }else{
+                    layer.msg(data.msg,{time: 1800});
+                }
+            });
+        });
+    }
+    /*
+     删除备份
+     */
+    function del(name) {
+        layer.confirm('确认要删除该备份文件吗？', {icon: 3}, function () {
+            $.post('{:url("admin/sql/delSqlFiles")}',{sqlfilename: name}, function (data) {
+                if (data.code == 1) {
+                    layer.msg(data.msg, {time: 1800}, function(){
+                        window.location.href=data.url;
+                    });
+                }else{
+                    layer.msg(data.info,{time: 1800});
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>
